@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # ---------------- MongoDB Replica Set ----------------
+  mongo1: &mongo-base
+    image: mongo:6.0
+    container_name: mongo1
+    command: mongod --replSet rs0 --bind_ip 0.0.0.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db1:/data/db
+    networks:
+      - mongo-net
+
+  mongo2:
+    <<: *mongo-base
+    container_name: mongo2
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./data/db2:/data/db
+
+  mongo3:
+    <<: *mongo-base
+    container_name: mongo3
+    ports:
+      - "27019:27017"
+    volumes:
+      - ./data/db3:/data/db
+
+  # ---------------- MinIO S3 Simulator ----------------
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./data/minio:/data
+    networks:
+      - mongo-net
+
+  # ---------------- Cliente Utilidade (para comandos e Node.js) ----------------
+  pbm-client:
+    image: mongo:6.0
+    container_name: pbm-client
+    command: sleep infinity
+    networks:
+      - mongo-net
+    volumes:
+      - ./pbm-agent:/pbm-agent
+
+networks:
+  mongo-net:
+    driver: bridge

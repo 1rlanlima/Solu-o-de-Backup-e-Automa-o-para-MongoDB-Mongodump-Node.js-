@@ -1,0 +1,11 @@
+exit
+exit;
+db.pedidos.insertOne({ produto: "Monitor", valor: 800 });
+db.usuarios.insertOne({ nome: "Mariana", cargo: "Analista", data_criacao: new Date() });
+use atividade_db;
+exit
+exit;
+db.usuarios.find();
+db.pedidos.insertOne({ produto: "Teclado", valor: 150 });
+db.usuarios.insertOne({ nome: "Carlos", cargo: "Desenvolvedor", data_criacao: new Date() });
+use atividade_db;
